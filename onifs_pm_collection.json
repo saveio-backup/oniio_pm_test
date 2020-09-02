@@ -1,0 +1,2626 @@
+{
+	"info": {
+		"_postman_id": "90df3437-da3f-4900-aa60-d8575417308f",
+		"name": "ontfs_pm_collection",
+		"description": "测试rpc_api_CN文档上的内容",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "service",
+			"item": [
+				{
+					"name": "startsdk",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "09951a72-7852-48bb-acad-b15c785680f6",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"startsdk返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error 为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"tests[\"result 为空\"] = jsonData.result === null;"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "55a10889-3298-4be1-9639-fd31809c4fa6",
+								"exec": [
+									"postman.setNextRequest(\"getfsnodeslist\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"startsdk\",\r\n    \"params\": [{\r\n        \"ChainRpcAddr\": \"http://139.219.136.38:20436\",\r\n        \"WalletPath\": \"./wallet.dat\",\r\n        \"GasPrice\": {{gasprice}},\r\n        \"GasLimit\": {{gaslimit}},\r\n        \"PdpVersion\": 1,\r\n        \"WalletPwd\": \"pwd\",\r\n        \"P2pProtocol\": \"tcp\",\r\n        \"P2pListenAddr\": \"10.0.1.105:21556\",\r\n        \"P2pNetworkId\": 1598608573,\r\n        \"TxTimeout\": 70\r\n    }],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "启动sdk"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b7895737-570d-4a13-865b-8ba08cee3d61",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "85787e54-4ec1-436e-b57e-3acefcc62b82",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "space",
+			"item": [
+				{
+					"name": "createspace",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "483eaf1e-af1a-4110-a195-323f0c75c0b0",
+								"exec": [
+									"// 构造一个注册请求",
+									"var onaddr=pm.globals.get(\"ontohost\");",
+									"var wallet=pm.globals.get(\"caddr1\");",
+									"const regRequest = {",
+									"  url: 'http://'+onaddr,",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"  body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"  jsonrpc: '2.0',",
+									"  method: 'getbalance',",
+									"  params: [wallet],",
+									"  id: 1",
+									"}) //要将JSON对象转为文本发送",
+									"  }",
+									"};",
+									"//发送请求",
+									"pm.sendRequest(regRequest, function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"pm.globals.set(\"balance1\", res.json().result.ong);",
+									"console.log(\"balance1=\"+res.json().result.ong);",
+									"});",
+									"",
+									"",
+									"postman.setNextRequest(\"uploadspacefile\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "bd4d2d13-0583-4431-9f58-d28fa6db1941",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"createspace返回结果：\" + JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error 为0\", function () {",
+									"  pm.expect(jsonData.error).to.eql(0);",
+									"",
+									"",
+									"});",
+									"pm.test(\"验证client地址\", function () {",
+									"",
+									"  var wallet = pm.globals.get(\"caddr1\");",
+									"  pm.expect(jsonData.result.SpaceOwner).to.eql(wallet);",
+									"});",
+									"",
+									"",
+									"",
+									"// var reqData = request.data//request表示请求对象，因为是josn的方式request.data是请求内容字符串",
+									"// var reqJson = JSON.parse(reqData)//将字符串转换为json对象",
+									"// var payAmount;",
+									"// var contrastConst;",
+									"// var actualCost;",
+									"",
+									"",
+									"// function formatTime(timeStamp) {",
+									"//   return timeStamp - timeStamp %(60 * 60);",
+									"// }",
+									"// // console.log(\"请求参数：\"+reqJson.params);",
+									"// if (jsonData.error === 0) {",
+									"//   // 构造一个注册请求",
+									"//   var onaddr = pm.globals.get(\"ontohost\");",
+									"//   var wallet = pm.globals.get(\"caddr1\");",
+									"//   const regRequest = {",
+									"//     url: 'http://' + onaddr,",
+									"//     method: 'POST',",
+									"//     header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"//     body: {",
+									"//       mode: 'raw',  // 使用raw(原始)格式",
+									"//       raw: JSON.stringify({",
+									"//         jsonrpc: '2.0',",
+									"//         method: 'getbalance',",
+									"//         params: [wallet],",
+									"//         id: 1",
+									"//       }) //要将JSON对象转为文本发送",
+									"//     }",
+									"//   };",
+									"//   //发送余额请求",
+									"",
+									"//   pm.sendRequest(regRequest, function (err, res) {",
+									"//     // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"//     // pm.globals.set(\"balance2\", res.json().result.ong);",
+									"//     //  console.log(\"balance2=\"+res.json().result.ong);",
+									"//     var balance1 = pm.globals.get(\"balance1\");",
+									"//     var balance2 = res.json().result.ong;",
+									"//     actualCost = balance1 - balance2;",
+									"//     //  console.log(balance1+\"-\"+balance2+\"=\"+actualCost);",
+									"",
+									"//     var host = pm.globals.get(\"host\");",
+									"//     //获取空间信息",
+									"//     const getspaceinfo = {",
+									"//       url: 'http://' + host,",
+									"//       method: 'POST',",
+									"//       header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"//       body: {",
+									"//         mode: 'raw',  // 使用raw(原始)格式",
+									"//         raw: JSON.stringify({",
+									"//           jsonrpc: '2.0',",
+									"//           method: 'getspaceinfo',",
+									"//           params: [],",
+									"//           id: '1'",
+									"//         }) //要将JSON对象转为文本发送",
+									"//       }",
+									"//     };",
+									"",
+									"",
+									"//     var startTime;",
+									"//     pm.sendRequest(getspaceinfo, function (err, res) {",
+									"//       var st = res.json().result.TimeStart;",
+									"//       startTime = (new Date(st.substring(0, 19)).getTime()) / 1000;",
+									"//      var currFeeRate=parseInt(res.json().result.CurrFeeRate);",
+									"",
+									"//      console.log(\"currFeeRate=\"+currFeeRate);",
+									"//       var sExpired = formatTime(pm.globals.get(\"expiredtime\"));",
+									"//       var sStatrt = formatTime(startTime);",
+									"//       console.log(\"expiredtime=\" + pm.globals.get(\"expiredtime\"));",
+									"//       console.log(\"sExpired=\" + sExpired);",
+									"//       console.log(\"startTime=\" + startTime);",
+									"//       console.log(\"sStatrt=\" + sStatrt);",
+									"//       var intervalMinute = (sExpired - sStatrt) / 60 / 60;",
+									"//        console.log(\"intervalMinute=\" + intervalMinute);",
+									"//       payAmount = currFeeRate*intervalMinute * pm.globals.get(\"copynum\") * pm.globals.get(\"spaceVolume\") / 256 ;",
+									"",
+									"//       contrastConst = pm.globals.get(\"gasprice\") * 20000;",
+									"//       var expiredCost = payAmount + contrastConst;",
+									"//       console.log(\"expiredCost=\" + expiredCost);",
+									"//       console.log(\"actualCost=\" + actualCost);",
+									"//       pm.test(\"核实花费正确\", function () {",
+									"//         pm.expect(expiredCost).to.eql(actualCost);",
+									"//       });",
+									"//     });",
+									"//   });",
+									"// }",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"createspace\",\r\n    \"params\": [{{spaceVolume}}, {{copynum}}, {{expiredtime}}],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updatespace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aa645583-5e15-41b3-bb2d-a08d6a793683",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"  console.log(\"updatespace 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为零\", function () {",
+									"   ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"   ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d1b89a41-80ef-46bb-8aa0-be1f353895c6",
+								"exec": [
+									"postman.setNextRequest(\"getspaceinfo\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"updatespace\",\r\n    \"params\": [2097152, {{expiredtime}}],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deletespace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b4c93054-b4d6-404b-8b1e-e1f929a8d161",
+								"exec": [
+									"  var jsonData = pm.response.json();",
+									"console.log(\"deletespace 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为零\", function () {",
+									"   ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7e88b474-7270-43ec-beec-7c7b0b86d1b8",
+								"exec": [
+									"postman.setNextRequest(\"null\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"deletespace\",\r\n    \"params\": [],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getspaceinfo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4612663f-d611-43a8-8dc2-0b440d17a63c",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\"getspaceinfo 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"   ",
+									"     pm.expect(jsonData.error).to.eql(0);",
+									"   ",
+									"",
+									"});",
+									"",
+									"pm.test(\"验证result不为null\", function () {",
+									"    ",
+									"     pm.expect(jsonData.result)!==null;",
+									"    ",
+									"",
+									"});",
+									"pm.test(\"验证钱包地址是否正确\", function () {",
+									"  ",
+									"     pm.expect(jsonData.result.SpaceOwner).to.eql(pm.globals.get(\"caddr1\"));",
+									"",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b634cbcf-e88a-493d-8de4-b2d76920876f",
+								"exec": [
+									"postman.setNextRequest(\"deletefiles\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getspaceinfo\",\r\n    \"params\": [],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "获取空间信息"
+					},
+					"response": []
+				},
+				{
+					"name": "uploadspacefile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6176e9ab-cc92-4b6f-a025-1cb7df188e6b",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"console.log(\"uploadSpaceFile 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"查询返回结果正确\", function () {",
+									"    ",
+									"    pm.expect(jsonData.desc).to.eql(\"SUCCESS\");",
+									"});",
+									"pm.test(\"查询返回的错误码是0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"    // pm.globals.set(\"spacefilehash\", jsonData.result.FileHash);",
+									"});",
+									"",
+									"var host=pm.globals.get(\"host\");",
+									"",
+									"    ",
+									"function sleep(numberMillis) {",
+									"var now = new Date();",
+									"var exitTime = now.getTime() + numberMillis;",
+									"while (true) {",
+									"now = new Date();",
+									"if (now.getTime() > exitTime)",
+									"return;",
+									"}",
+									"}",
+									"//发送查询进度请求",
+									" function uploadProcess(taskId){",
+									"     const gettaskinfo = {",
+									"      url: 'http://'+host,",
+									"     method: 'POST',",
+									"     header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"     body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"    jsonrpc: '2.0',",
+									"    method: 'getuploadtaskinfobyid',",
+									"    params: [taskId],",
+									"    id: '1'",
+									"}) //要将JSON对象转为文本发送",
+									"}",
+									"};",
+									"     ",
+									"        sleep(3000);",
+									"        pm.sendRequest(gettaskinfo, function (err, res) {",
+									"            // console.log(\"返回上传任务详情：\"+JSON.stringify(res.json()))",
+									"           var  resJson=res.json().result.TaskBaseInfo;",
+									"           if(resJson.Status===2 && resJson.Progress===0){",
+									"                pm.globals.set(\"spacefilehash\", resJson.FileHash);",
+									"           console.log(\"Status=\"+resJson.Status+\" Progress=\"+ resJson.Progress)",
+									"           pm.test(\"上传成功\", function () {",
+									"    ",
+									"    pm.expect( resJson.Progress).to.eql(0);",
+									"});",
+									"           }else if(resJson.Progress===1){",
+									"                console.log(\"上传过程报错：\"+JSON.stringify(res.json()));",
+									"                   pm.test(\"上传成功\", function () {",
+									"    pm.expect(resJson.Progress).to.eql(0);",
+									"});",
+									"           }else{",
+									"               uploadProcess(taskId);",
+									"           }",
+									"        });",
+									"    }",
+									"   if(jsonData.error===0){",
+									"   uploadProcess(jsonData.result.TaskID);",
+									"   }",
+									"   "
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8e35acbf-d70b-4335-8d98-14ee6a4db0a1",
+								"exec": [
+									"//查询节点端口是否开启",
+									"",
+									"//发送请求",
+									"/*pm.sendRequest(\"http://\"+pm.globals.get(\"shost1\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"   if(err){",
+									"       console.log(pm.globals.get(\"shost1\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost1\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost2\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"  if(err){",
+									"       console.log(pm.globals.get(\"shost2\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost2\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost3\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"     if(err){",
+									"       console.log(pm.globals.get(\"shost3\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost3\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"*/",
+									"postman.setNextRequest(\"getspacefileinfo\");",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"uploadfile\",\r\n    \"params\": [{\r\n        \"FilePath\": \"{{filepath}}/uploadfile.md\",\r\n        \"FileDesc\": \"spaceFile.md\",\r\n        \"FileSize\": 1024,\r\n        \"TimeExpired\": {{expiredtime}},\r\n        \"CopyNum\": {{copynum}},\r\n        \"FirstPdp\":false,\r\n        \"StorageType\": 0,\r\n        \"EncryptPassword\": \"{{pwd}}\"\r\n    }],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "上传空间文件"
+					},
+					"response": []
+				},
+				{
+					"name": "getspacefileinfo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f4cd16fd-de44-4698-ac3a-fb5617dc9e3b",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"console.log(\"getfileinfo  返回结果：\"+JSON.stringify(pm.response.json()));",
+									"",
+									"",
+									"pm.test(\"查询返回结果正确\", function () {",
+									"    ",
+									"    pm.expect(jsonData.desc).to.eql(\"SUCCESS\");",
+									"});",
+									"pm.test(\"查询返回的错误码是0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"",
+									"pm.test(\"返回文件hash是查询的hash\", function () {",
+									"    ",
+									"    pm.expect(jsonData.result.FileHash).to.eql(pm.globals.get(\"spacefilehash\"));",
+									"});",
+									"",
+									"pm.test(\"返回拥有者是客户端钱包地址\", function () {",
+									"    ",
+									"    pm.expect(jsonData.result.FileOwner).to.eql(pm.globals.get(\"caddr1\"));",
+									"});",
+									"// pm.globals.set(\"next\", \"getfilepdpinfolist\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "49d762ed-3387-41e4-a7dd-6270f7705336",
+								"exec": [
+									"postman.setNextRequest(\"getspacefilepdpinfolist\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getfileinfo\",\r\n    \"params\": [\"{{spacefilehash}}\"],\r\n    \"id\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getspacefilepdpinfolist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c6d6a1b8-ead2-42e4-9de6-5781fd26de0e",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\"getfilepdpinfolist 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e452de4c-3dd2-42e1-b8c7-f4b15e081069",
+								"exec": [
+									"// postman.setNextRequest(\"downloadfile\");",
+									"",
+									"",
+									"function sleep(numberMillis) {",
+									"var now = new Date();",
+									"var exitTime = now.getTime() + numberMillis;",
+									"while (true) {",
+									"now = new Date();",
+									"if (now.getTime() > exitTime)",
+									"return;",
+									"}",
+									"}",
+									"",
+									"",
+									"",
+									"const getpdpinfo = {",
+									"  url: 'http://'+pm.globals.get(\"host\"),",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"  body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"  jsonrpc: '2.0',",
+									"  method: 'getfilepdpinfolist',",
+									"  params: [pm.globals.get(\"spacefilehash\")],",
+									"  id: 1",
+									"}) //要将JSON对象转为文本发送",
+									"  }",
+									"};",
+									"//发送请求",
+									" var result;",
+									"  pdpinfo();",
+									"function pdpinfo(){",
+									"    sleep(10000);",
+									"pm.sendRequest(getpdpinfo, function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    result=JSON.stringify(res.json().result);",
+									"    // console.log(\"多次查询上传后pdp信息= \"+JSON.stringify(res.json()))",
+									"   if(result===\"[]\"||result===\"null\"){",
+									"       pdpinfo();",
+									"   }else{",
+									"   return;",
+									"   }});",
+									"}",
+									"",
+									"",
+									"postman.setNextRequest(\"downloadspacefile\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getfilepdpinfolist\",\r\n    \"params\": [\"{{spacefilehash}}\"],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "查询文件的pdp证明记录信息\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "downloadspacefile",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "00bcb5ab-b95f-4249-baef-4a41c7729b99",
+								"exec": [
+									"//查询节点端口是否开启",
+									"",
+									"//发送请求",
+									"/*pm.sendRequest(\"http://\"+pm.globals.get(\"shost1\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"   if(err){",
+									"       console.log(pm.globals.get(\"shost1\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost1\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost2\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"  if(err){",
+									"       console.log(pm.globals.get(\"shost2\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost2\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost3\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"     if(err){",
+									"       console.log(pm.globals.get(\"shost3\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost3\")+\"节点访问成功\")",
+									"   }",
+									"});*/",
+									"",
+									"postman.setNextRequest(\"updatespace\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "4be9c135-3c05-42d4-afa9-486a2a1324a8",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"downloadSpaceFile 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"   ",
+									"var host=pm.globals.get(\"host\");",
+									"",
+									"function sleep(numberMillis) {",
+									"var now = new Date();",
+									"var exitTime = now.getTime() + numberMillis;",
+									"while (true) {",
+									"now = new Date();",
+									"if (now.getTime() > exitTime)",
+									"return;",
+									"}",
+									"}",
+									" //发送查询进度请求",
+									" function downloadProcess(taskId){",
+									"    const getTaskInfo = {",
+									"  url: 'http://'+host,",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"  body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"  jsonrpc: '2.0',",
+									"  method: 'getdownloadtaskinfobyid',",
+									"  params: [taskId],",
+									"  id: 1",
+									"}) ",
+									" }",
+									"};",
+									"        sleep(4000);",
+									"        pm.sendRequest(getTaskInfo, function (err, res) {",
+									"           var  resJson=res.json().result.TaskBaseInfo;",
+									"          if(resJson.Status===2 &&resJson.Progress===0){",
+									"           console.log(\"Status=\"+resJson.Status+\" Progress=\"+ resJson.Progress)",
+									"            pm.test(\"下载成功\", function () {",
+									"    pm.expect( resJson.Progress).to.eql(0);",
+									"});",
+									"            //   accountDownloadFee();",
+									"           }else if(resJson.Progress===1){",
+									"               console.log(\"下载过程出错=\"+JSON.stringify(res.json()))",
+									"            pm.test(\"下载成功\", function () {",
+									"    pm.expect( resJson.Progress).to.eql(0);",
+									"});",
+									"           }",
+									"           else{",
+									"                downloadProcess(taskId);",
+									"            ",
+									"           }",
+									"            ",
+									"        });",
+									"    }",
+									"  if(jsonData.error===0){",
+									"   downloadProcess(jsonData.result.TaskID);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"downloadfile\",\r\n    \"params\": [{\r\n        \"FileHash\": \"{{spacefilehash}}\",\r\n        \"InOrder\": true,\r\n        \"MaxPeerCnt\": 3,\r\n        \"OutFilePath\": \"{{downloadpath}}/spaceFile.md\",\r\n        \"DecryptPwd\": \"\"\r\n    }],\r\n    \"id\": \"1\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "下载空间文件"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "faec32e4-788c-4425-a9b0-62414028bdd4",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "fad51285-55fe-48b1-aa7c-f2f851f70283",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "node",
+			"item": [
+				{
+					"name": "getfsnodeslist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bb02e1cc-4ac3-45ac-975d-7e68ddce810f",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"getfsnodeslist 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"var copynum=pm.globals.get(\"copynum\");",
+									"pm.test(\"验证error为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"   ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "451e69c2-d7c4-4051-9529-c1ecd7932328",
+								"exec": [
+									"// postman.setNextRequest(\"querynode\");",
+									"postman.setNextRequest(\"querynode_noexist\");",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getfsnodeslist\",\r\n    \"params\": [50],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "68c26553-24a4-48ea-b590-8e9bc23854bd",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "dcf12ac0-f5d0-4ff1-a4cd-2b2066070d64",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "file",
+			"item": [
+				{
+					"name": "uploadfile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4a87f9c0-052e-4167-8818-7f7eb0838487",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"console.log(\"uploadfile 返回结果：\" + JSON.stringify(pm.response.json()));",
+									"",
+									"pm.test(\"查询返回结果正确\", function () {",
+									"",
+									"    pm.expect(jsonData.desc).to.eql(\"SUCCESS\");",
+									"});",
+									"pm.test(\"查询返回的错误码是0\", function () {",
+									"",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"",
+									"",
+									"",
+									"var reqData = request.data//request表示请求对象，因为是josn的方式request.data是请求内容字符串",
+									"var reqJson = JSON.parse(reqData)//将字符串转换为json对象",
+									"var payAmount;",
+									"console.log(\"请求参数：\" + JSON.stringify(reqJson.params[0].FirstPdp));",
+									"var host = pm.globals.get(\"host\");",
+									"pm.globals.set(\"firstPdp\", reqJson.params[0].FirstPdp);",
+									"var onaddr = pm.globals.get(\"ontohost\");",
+									"var wallet = pm.globals.get(\"caddr1\");",
+									"var host = pm.globals.get(\"host\");",
+									"var gasLimit = pm.globals.get(\"gaslimit\");",
+									"var gasPrice = pm.globals.get(\"gasprice\");",
+									"",
+									"function formatTime(timeStamp) {",
+									"    return timeStamp - timeStamp % (60*60);",
+									"}",
+									"",
+									"function sleep(numberMillis) {",
+									"    var now = new Date();",
+									"    var exitTime = now.getTime() + numberMillis;",
+									"    while (true) {",
+									"        now = new Date();",
+									"        if (now.getTime() > exitTime)",
+									"            return;",
+									"    }",
+									"}",
+									"",
+									"//获取文件Hash",
+									"function getfileHash(taskId) {",
+									"    const gettaskinfo = {",
+									"        url: 'http://' + host,",
+									"        method: 'POST',",
+									"        header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"        body: {",
+									"            mode: 'raw',  // 使用raw(原始)格式",
+									"            raw: JSON.stringify({",
+									"                jsonrpc: '2.0',",
+									"                method: 'getuploadtaskinfobyid',",
+									"                params: [taskId],",
+									"                id: '1'",
+									"            }) //要将JSON对象转为文本发送",
+									"        }",
+									"    };",
+									"",
+									"    pm.sendRequest(gettaskinfo, function (err, res) {",
+									"        var resData = res.json();",
+									"        var fileHash = resData.result.TaskBaseInfo.FileHash;",
+									"        console.log(\"fileHash=\" + fileHash);",
+									"        if (fileHash === \"\") {",
+									"            getfileHash(taskId);",
+									"        } else {",
+									"            pm.globals.set(\"filehash\", fileHash);",
+									"            // accountUploadFee(fileHash);",
+									"        }",
+									"",
+									"    });",
+									"",
+									"}",
+									"",
+									"// //计算上传花费",
+									"// function accountUploadFee(fileHash) {",
+									"//     //获取文件信息",
+									"//     const getfileinfo = {",
+									"//         url: 'http://' + host,",
+									"//         method: 'POST',",
+									"//         header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"//         body: {",
+									"//             mode: 'raw',  // 使用raw(原始)格式",
+									"//             raw: JSON.stringify({",
+									"//                 jsonrpc: '2.0',",
+									"//                 method: 'getfileinfo',",
+									"//                 params: [fileHash],",
+									"//                 id: '1'",
+									"//             }) //要将JSON对象转为文本发送",
+									"//         }",
+									"//     };",
+									"",
+									"",
+									"//     pm.sendRequest(getfileinfo, function (err, res) {",
+									"//         //   console.log(err ? err : res.json());  // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"//         var st = res.json().result.TimeStart;",
+									"",
+									"//         var startTime = (new Date(st.substring(0, 19)).getTime()) / 1000;",
+									"",
+									"//         var blockCount = res.json().result.FileBlockCount;",
+									"//         var currFeeRate=res.json().result.CurrFeeRate;",
+									"//         payAmount = parseFloat(res.json().result.PayAmount) * Math.pow(10, 9);",
+									"//         console.log(\"payAmount=\" + payAmount);",
+									"",
+									"",
+									"//         //  var pdpCount=parseInt((pm.globals.get(\"expiredtime\")- startTime)/pm.globals.get(\"pdpinterval\")+1);",
+									"//         //  var expiredCost =parseInt(pdpCount * pm.globals.get(\"copynum\") * blockCount * 256 *  1);",
+									"",
+									"//         var fExpired = formatTime(pm.globals.get(\"expiredtime\"));",
+									"//         var fStatrt = formatTime(startTime);",
+									"//         console.log(\"expiredtime=\" + pm.globals.get(\"expiredtime\"));",
+									"//         console.log(\"fExpired=\" + fExpired);",
+									"//         console.log(\"startTime=\" + startTime);",
+									"//         console.log(\"fStatrt=\" + fStatrt);",
+									"//         var intervalMinute = (fExpired - fStatrt) / 60/60;",
+									"//         var fileStorageCost = intervalMinute * pm.globals.get(\"copynum\") * blockCount * 1*currFeeRate;",
+									"",
+									"//         console.log(\"expiredCost=\" + fileStorageCost);",
+									"//         pm.test(\"核实上传文件的花费\", function () {",
+									"",
+									"//             pm.expect(fileStorageCost).to.eql(payAmount);",
+									"//         })",
+									"",
+									"//     });",
+									"// }",
+									"",
+									"",
+									"",
+									"//发送查询进度请求",
+									"function uploadProcess(taskId) {",
+									"    const gettaskinfo = {",
+									"        url: 'http://' + host,",
+									"        method: 'POST',",
+									"        header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"        body: {",
+									"            mode: 'raw',  // 使用raw(原始)格式",
+									"            raw: JSON.stringify({",
+									"                jsonrpc: '2.0',",
+									"                method: 'getuploadtaskinfobyid',",
+									"                params: [taskId],",
+									"                id: '1'",
+									"            }) //要将JSON对象转为文本发送",
+									"        }",
+									"    };",
+									"",
+									"    sleep(3000);",
+									"    pm.sendRequest(gettaskinfo, function (err, res) {",
+									"        // console.log(\"返回上传任务详情：\"+JSON.stringify(res.json()))",
+									"        var resJson = res.json().result.TaskBaseInfo;",
+									"        if (resJson.Status === 2 && resJson.Progress === 0) {",
+									"            console.log(\"Status=\" + resJson.Status + \" Progress=\" + resJson.Progress)",
+									"            pm.test(\"上传成功\", function () {",
+									"                pm.expect(resJson.Progress).to.eql(0);",
+									"            });",
+									"            getfileHash(taskId);",
+									"        } else if (resJson.Progress === 1) {",
+									"            console.log(\"上传过程报错：\" + JSON.stringify(res.json()));",
+									"            pm.test(\"上传成功\", function () {",
+									"                pm.expect(resJson.Progress).to.eql(0);",
+									"            });",
+									"",
+									"        } else {",
+									"            uploadProcess(taskId);",
+									"        }",
+									"    });",
+									"}",
+									"if (jsonData.error === 0) {",
+									"    uploadProcess(jsonData.result.TaskID);",
+									"}",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3b6b57bd-7ced-49da-9b4e-4da1bc8c84c3",
+								"exec": [
+									"//查询余额",
+									"pm.globals.set(\"expiredtime\", Math.round(new Date().getTime() / 1000) + 90000);// 构造一个注册请求",
+									"var onaddr = pm.globals.get(\"ontohost\");",
+									"var wallet = pm.globals.get(\"caddr1\");",
+									"const regRequest = {",
+									"  url: 'http://' + onaddr,",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"  body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"      jsonrpc: '2.0',",
+									"      method: 'getbalance',",
+									"      params: [wallet],",
+									"      id: 1",
+									"    }) //要将JSON对象转为文本发送",
+									"  }",
+									"};",
+									"//发送请求",
+									"pm.sendRequest(regRequest, function (err, res) {",
+									"  // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"  pm.globals.set(\"balance1\", res.json().result.ong);",
+									"  console.log(\"balance1=\" + res.json().result.ong);",
+									"});",
+									"",
+									"",
+									"//查询节点端口是否开启",
+									"",
+									"//发送请求",
+									"/*pm.sendRequest(\"http://\"+pm.globals.get(\"shost1\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"   if(err){",
+									"       console.log(pm.globals.get(\"shost1\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost1\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost2\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"  if(err){",
+									"       console.log(pm.globals.get(\"shost2\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost2\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost3\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"     if(err){",
+									"       console.log(pm.globals.get(\"shost3\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost3\")+\"节点访问成功\")",
+									"   }",
+									"});*/",
+									"postman.setNextRequest(\"getfileinfo\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"uploadfile\",\r\n    \"params\": [{\r\n        \"FilePath\": \"{{filepath}}/uploadfile.md\",\r\n        \"FileDesc\": \"file.md\",\r\n        \"FileSize\": 1024,\r\n        \"TimeExpired\": {{expiredtime}},\r\n        \"CopyNum\": {{copynum}},\r\n        \"StorageType\": 1,\r\n        \"FirstPdp\": true,\r\n        \"EncryptPassword\": \"{{pwd}}\"\r\n    }],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "上传文件"
+					},
+					"response": [
+						{
+							"name": "uploadfile",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"uploadfile\",\r\n    \"params\": [{\r\n        \"FilePath\": \"{{filepath}}\",\r\n        \"FileDesc\": \"ontfs_sdk_rpc_api_CN.md\",\r\n        \"FileSize\": 1024,\r\n        \"TimeExpired\": {{expiredtime}},\r\n        \"CopyNum\": 1,\r\n        \"StorageType\": 1,\r\n        \"Encrypt\": true,\r\n        \"PdpInterval\": {{pdpinterval}},\r\n        \"EncryptPassword\": \"{{pwd}}\",\r\n        \"WhiteList\": []\r\n    }],\r\n    \"id\": \"1\"\r\n}"
+								},
+								"url": {
+									"raw": "http://{{host}}",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Headers",
+									"value": "Content-Type"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 30 Dec 2019 10:41:38 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "374"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"desc\": \"SUCCESS\",\n    \"error\": 0,\n    \"id\": \"1\",\n    \"jsonrpc\": \"2.0\",\n    \"result\": {\n        \"Tx\": \"2664bf6b015e2cfac2db4b495afe07b97e1e0479c86a31b50ce970366884824c\",\n        \"FileHash\": \"SeNK5tM8jcaDiZZmxyeacbaQCkRyECYcEWVpZjFJoT6xzuMD\",\n        \"Url\": \"ontfs://SeNK5tM8jcaDiZZmxyeacbaQCkRyECYcEWVpZjFJoT6xzuMD&name=ontfs_sdk_rpc_api_CN.md&owner=AN749meCQLmrLbM2WnDNe7LvDXieFqQ6Vj&size=1024&blocknum=1\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "getfilelist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "89c40e2e-70bc-436b-9148-389654fdbef5",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"getfilelist 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									" ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"  ",
+									"",
+									"});",
+									"",
+									"pm.test(\"验证result包含filehash\", function () {",
+									"   ",
+									"    pm.expect(jsonData.result).to.include(pm.globals.get(\"filehash\"));",
+									"",
+									"});",
+									"pm.test(\"验证result包含filehash1\", function () {",
+									"   ",
+									"    pm.expect(jsonData.result).to.include(pm.globals.get(\"filehash1\"));",
+									"",
+									"});",
+									"/*pm.test(\"验证result包含filehash1\", function () {",
+									"    console.log(\"filehash1===\"+pm.globals.get(\"filehash1\"));",
+									"    var filehash1= pm.globals.get(\"filehash1\");",
+									"   if(filehash1!== null  || filehash1!== undefined){",
+									"    pm.expect(jsonData.result).to.include();",
+									"   }",
+									"",
+									"});*/",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f4dd092b-ab8a-485b-b814-8c4aaae69328",
+								"exec": [
+									"postman.setNextRequest(\"changefileowner\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getfilelist\",\r\n    \"params\": [],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getfileinfo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f4cd16fd-de44-4698-ac3a-fb5617dc9e3b",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"console.log(\"getfileinfo  返回结果：\"+JSON.stringify(pm.response.json()));",
+									"",
+									"",
+									"pm.test(\"查询返回结果正确\", function () {",
+									"    ",
+									"    pm.expect(jsonData.desc).to.eql(\"SUCCESS\");",
+									"});",
+									"pm.test(\"查询返回的错误码是0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"",
+									"pm.test(\"返回文件hash是查询的hash\", function () {",
+									"    ",
+									"    pm.expect(jsonData.result.FileHash).to.eql(pm.globals.get(\"filehash\"));",
+									"});",
+									"",
+									"pm.test(\"返回拥有者是客户端钱包地址\", function () {",
+									"    ",
+									"    pm.expect(jsonData.result.FileOwner).to.eql(pm.globals.get(\"caddr1\"));",
+									"});",
+									"// pm.globals.set(\"next\", \"getfilepdpinfolist\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "49d762ed-3387-41e4-a7dd-6270f7705336",
+								"exec": [
+									"postman.setNextRequest(\"getfilepdpinfolist\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getfileinfo\",\r\n    \"params\": [\"{{filehash}}\"],\r\n    \"id\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "downloadfile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "33840047-5d6c-45dc-9aaf-dd510c37ee03",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"downloadfile  返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"",
+									"",
+									" ",
+									"var reqData=request.data//request表示请求对象，因为是josn的方式request.data是请求内容字符串",
+									"var reqJson=JSON.parse(reqData)//将字符串转换为json对象",
+									"var payAmount;",
+									"var contrastConst;",
+									"var actualCost; ",
+									"var expiredCost;",
+									"   ",
+									"var host=pm.globals.get(\"host\");",
+									"var onaddr=pm.globals.get(\"ontohost\");",
+									"var wallet=pm.globals.get(\"caddr1\");  ",
+									"",
+									"    //获取质押",
+									"function getReapledge(payAmount){",
+									"    const url = {",
+									"  url: 'http://'+host,",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"  body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"  jsonrpc: '2.0',",
+									"  method: 'getfilereadpledge',",
+									"  params: [pm.globals.get(\"filehash\")],",
+									"  id: 1",
+									"}) //要将JSON对象转为文本发送",
+									" }",
+									"};",
+									"",
+									"pm.sendRequest(url, function (err, res) {",
+									"    console.log(\"查询文件\"+pm.globals.get(\"filehash\")+\"   质押结果\"+res.text());",
+									"    var RestMoney=res.json().result.RestMoney;",
+									"     console.log(\"payAmount=\"+payAmount);",
+									"         console.log(\"RestMoney=\"+RestMoney);",
+									"//    pm.test(\"核算下载费用\", function () {",
+									"//        pm.expect(expiredCost).to.eql(actualCost);",
+									"  ",
+									"// });",
+									"});",
+									"",
+									"}",
+									"",
+									"//   function accountDownloadFee(){",
+									"//  //获取文件信息",
+									"//     const getfileinfo = {",
+									"//       url: 'http://'+host,",
+									"//      method: 'POST',",
+									"//      header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"//      body: {",
+									"//     mode: 'raw',  // 使用raw(原始)格式",
+									"//     raw: JSON.stringify({",
+									"//     jsonrpc: '2.0',",
+									"//     method: 'getfileinfo',",
+									"//     params: [pm.globals.get(\"filehash\")],",
+									"//     id: '1'",
+									"// }) //要将JSON对象转为文本发送",
+									"// }",
+									"// };",
+									"",
+									"// pm.sendRequest(getfileinfo, function (err, res) {",
+									"//   var st=res.json().result.TimeStart;",
+									"//   var blockCount=res.json().result.FileBlockCount;",
+									"",
+									"//  //确定下载节点个数",
+									"//  var downnum;",
+									"//  var copynum=pm.globals.get(\"copynum\");",
+									"//   var nodeNum=Math.ceil(blockCount/32);",
+									"//  var maxpeercnt =reqJson.params[0].MaxPeerCnt;",
+									"",
+									"//  console.log(\" maxpeercnt=\"+reqJson.params[0].MaxPeerCnt+\" \"+\"nodeNum= \"+nodeNum)",
+									"//  if(maxpeercnt > nodeNum){",
+									"//      downnum=nodeNum;",
+									"//     } else{",
+									"//          downnum=maxpeercnt;",
+									"//      }",
+									"//     //存储下载节点个数",
+									"//     pm.globals.set(\"downPledge\", downnum);",
+									" ",
+									"//  //下载文件计费",
+									"//   payAmount =parseInt(downnum * blockCount * 256 *  1);",
+									"",
+									"//  console.log(\"payAmount=\"+ payAmount+\" downnum=\"+downnum+\" blockCount=\"+blockCount);",
+									"//  getReapledge(payAmount);",
+									"// });",
+									"",
+									"// }",
+									" ",
+									"",
+									"",
+									"    ",
+									"function sleep(numberMillis) {",
+									"var now = new Date();",
+									"var exitTime = now.getTime() + numberMillis;",
+									"while (true) {",
+									"now = new Date();",
+									"if (now.getTime() > exitTime)",
+									"return;",
+									"}",
+									"}",
+									"",
+									"    //发送查询进度请求",
+									" function downloadProcess(taskId){",
+									"    const getTaskInfo = {",
+									"  url: 'http://'+host,",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"  body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"  jsonrpc: '2.0',",
+									"  method: 'getdownloadtaskinfobyid',",
+									"  params: [taskId],",
+									"  id: 1",
+									"}) ",
+									" }",
+									"};",
+									"        sleep(4000);",
+									"        pm.sendRequest(getTaskInfo, function (err, res) {",
+									"           var  resJson=res.json().result.TaskBaseInfo;",
+									"          if(resJson.Status===2 &&resJson.Progress===0){",
+									"           console.log(\"Status=\"+resJson.Status+\" Progress=\"+ resJson.Progress)",
+									"            pm.test(\"下载成功\", function () {",
+									"    pm.expect( resJson.Progress).to.eql(0);",
+									"});",
+									"            //    accountDownloadFee();",
+									"           }else if(resJson.Progress===1){",
+									"               console.log(\"下载过程出错=\"+JSON.stringify(res.json()))",
+									"            pm.test(\"下载成功\", function () {",
+									"    pm.expect( resJson.Progress).to.eql(0);",
+									"});",
+									"           }",
+									"           else{",
+									"                downloadProcess(taskId);",
+									"            ",
+									"           }",
+									"            ",
+									"        });",
+									"    }",
+									"  if(jsonData.error===0){",
+									"   downloadProcess(jsonData.result.TaskID);",
+									"}",
+									"",
+									"   "
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2e7780bb-6af5-45a1-8333-5ce1a4fa3282",
+								"exec": [
+									"// 构造一个注册请求",
+									"var onaddr = pm.globals.get(\"ontohost\");",
+									"var wallet = pm.globals.get(\"caddr1\");",
+									"const regRequest = {",
+									"    url: 'http://' + onaddr,",
+									"    method: 'POST',",
+									"    header: 'Content-Type: application/json', //注意要在Header中声明内容使用的类型",
+									"    body: {",
+									"        mode: 'raw', // 使用raw(原始)格式",
+									"        raw: JSON.stringify({",
+									"                jsonrpc: '2.0',",
+									"                method: 'getbalance',",
+									"                params: [wallet],",
+									"                id: 1",
+									"            }) //要将JSON对象转为文本发送",
+									"    }",
+									"};",
+									"//发送请求",
+									"pm.sendRequest(regRequest, function(err, res) {",
+									"    // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    pm.globals.set(\"balance1\", res.json().result.ong);",
+									"    console.log(\"balance1=\" + res.json().result.ong);",
+									"});",
+									"",
+									"//查询节点端口是否开启",
+									"",
+									"/*//发送请求",
+									"pm.sendRequest(\"http://\" + pm.globals.get(\"shost1\"), function(err, res) {",
+									"    // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    if (err) {",
+									"        console.log(pm.globals.get(\"shost1\") + \"节点访问出错\" + JSON.stringify(err))",
+									"    } else {",
+									"        console.log(pm.globals.get(\"shost1\") + \"节点访问成功\")",
+									"    }",
+									"});",
+									"",
+									"//发送请求",
+									"pm.sendRequest(\"http://\" + pm.globals.get(\"shost2\"), function(err, res) {",
+									"    // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    if (err) {",
+									"        console.log(pm.globals.get(\"shost2\") + \"节点访问出错\" + JSON.stringify(err))",
+									"    } else {",
+									"        console.log(pm.globals.get(\"shost2\") + \"节点访问成功\")",
+									"    }",
+									"});",
+									"//发送请求",
+									"pm.sendRequest(\"http://\" + pm.globals.get(\"shost3\"), function(err, res) {",
+									"    // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    if (err) {",
+									"        console.log(pm.globals.get(\"shost3\") + \"节点访问出错\" + JSON.stringify(err))",
+									"    } else {",
+									"        console.log(pm.globals.get(\"shost3\") + \"节点访问成功\")",
+									"    }",
+									"});",
+									"*/",
+									"",
+									"",
+									"postman.setNextRequest(\"decryptfile\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"downloadfile\",\r\n    \"params\": [{\r\n        \"FileHash\": \"{{filehash}}\",\r\n        \"InOrder\": true,\r\n        \"MaxPeerCnt\": {{maxPeerCnt}},\r\n        \"OutFilePath\": \"{{downloadpath}}/file.md\",\r\n        \"DecryptPwd\": \"\"\r\n    }],\r\n    \"id\": \"1\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "decryptfile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f10938b5-01b8-4fa9-a1cd-c87ba85d1a0a",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"decryptfile  返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7fa90794-8fb0-4877-8080-443f6e117937",
+								"exec": [
+									"postman.setNextRequest(\"retryUploadFile\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"decryptfile\",\r\n    \"params\": [{\r\n        \"FilePath\": \"{{downloadpath}}/file.md\",\r\n        \"OutFilePath\": \"{{outfilepath}}/file.md\",\r\n        \"DecryptPwd\": \"{{pwd}}\"\r\n    }],\r\n\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "renewfile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "eb31c7ee-ddc8-412f-b2c9-7684513e065b",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"renewfile 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0 \", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"// pm.globals.set(\"next\", \"getfilereadpledge\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "918e83d8-6aa0-4026-99b1-a057deed48a4",
+								"exec": [
+									"postman.setNextRequest(\"getfilereadpledge\");\r",
+									"// postman.setNextRequest(\"createspace\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"renewfile\",\r\n    \"params\": [\"{{filehash}}\", 3600],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deletefiles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "35579307-e0f1-4a23-b167-13361256c8a5",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"deletefiles 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"pm.test(\"验证result为null\", function () {",
+									"    var rs=  JSON.stringify(jsonData.result);",
+									"     pm.expect(rs).to.include(\"null\");",
+									"    ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8a5c2234-736f-4f8a-8205-cf6643c23e24",
+								"exec": [
+									"",
+									"postman.setNextRequest(\"retrydeletefile\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"deletefiles\",\r\n    \"params\": [\r\n       [\"{{filehash}}\",\"{{spacefilehash}}\"]\r\n    ],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changefileowner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6705ba12-5487-4749-8f22-85ddabf7f7cd",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"console.log(\"changefileowner 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error 为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "120148ff-6171-4dc1-bb96-fcc64e40cbe3",
+								"exec": [
+									"//查询节点端口是否开启",
+									"",
+									"//发送请求",
+									"/*pm.sendRequest(\"http://\"+pm.globals.get(\"shost1\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"   if(err){",
+									"       console.log(pm.globals.get(\"shost1\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost1\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost2\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"  if(err){",
+									"       console.log(pm.globals.get(\"shost2\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost2\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost3\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"     if(err){",
+									"       console.log(pm.globals.get(\"shost3\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost3\")+\"节点访问成功\")",
+									"   }",
+									"});*/",
+									"postman.setNextRequest(\"renewfile\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"changefileowner\",\r\n    \"params\": [\"{{filehash1}}\",\"{{caddr2}}\"],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getfilereadpledge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3b099331-53c7-47fe-8df1-84e452ab7f93",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\"getfilereadpledge 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"   ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"    ",
+									"pm.globals.set(\"expireheight\",jsonData.result.ExpireHeight );",
+									"});",
+									"",
+									"var downPledge=pm.globals.get(\"downPledge\");",
+									"pm.test(\"验证节点质押个数为\"+downPledge, function () {",
+									"    var pledeg=JSON.stringify(jsonData.result.ReadPlans.length);",
+									"    console.log(\"pledeg=\"+pledeg);",
+									"    //获取块数",
+									"    ",
+									"      pm.expect(pledeg).to.eql(JSON.stringify(downPledge));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dcfa7f4c-205a-41aa-9957-24caaaf55da3",
+								"exec": [
+									"",
+									"//postman.setNextRequest(\"cancelfilereadpledge\");",
+									" postman.setNextRequest(\"createspace\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getfilereadpledge\",\r\n    \"params\": [\"{{filehash}}\"],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "查询下载文件在合约中的质押情况"
+					},
+					"response": []
+				},
+				{
+					"name": "getfilepdpinfolist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c6d6a1b8-ead2-42e4-9de6-5781fd26de0e",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									" ",
+									"var reqData=request.data//request表示请求对象，因为是josn的方式request.data是请求内容字符串",
+									"var reqJson=JSON.parse(reqData)//将字符串转换为json对象",
+									"console.log(\"请求参数：\"+JSON.stringify(reqJson));",
+									"console.log(\"getfilepdpinfolist 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"",
+									"var nodeNum;",
+									"var firstPdp=pm.globals.get(\"firstPdp\");",
+									"console.log(\"firstPdp=\"+firstPdp);",
+									"if(firstPdp){",
+									"    nodeNum=pm.globals.get(\"copynum\");",
+									"}else{",
+									"    nodeNum=\"0\";",
+									"}",
+									"",
+									"pm.test(\"验证pdp提交节点个数为\"+nodeNum, function () {",
+									"    var nodeNum1=JSON.stringify(jsonData.result.length);",
+									"    console.log(\"nodeNum1=\"+nodeNum1);",
+									"      pm.expect(nodeNum1).to.eql(nodeNum);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e452de4c-3dd2-42e1-b8c7-f4b15e081069",
+								"exec": [
+									"// postman.setNextRequest(\"downloadfile\");",
+									"",
+									"",
+									"function sleep(numberMillis) {",
+									"var now = new Date();",
+									"var exitTime = now.getTime() + numberMillis;",
+									"while (true) {",
+									"now = new Date();",
+									"if (now.getTime() > exitTime)",
+									"return;",
+									"}",
+									"}",
+									"",
+									"",
+									"",
+									"const getpdpinfo = {",
+									"  url: 'http://'+pm.globals.get(\"host\"),",
+									"  method: 'POST',",
+									"  header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"  body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"  jsonrpc: '2.0',",
+									"  method: 'getfilepdpinfolist',",
+									"  params: [pm.globals.get(\"filehash\")],",
+									"  id: 1",
+									"}) //要将JSON对象转为文本发送",
+									"  }",
+									"};",
+									"//发送请求",
+									" var result;",
+									"  pdpinfo();",
+									"  var copynum=pm.globals.get(\"copynum\");",
+									"  var count=0;",
+									"function pdpinfo(){",
+									"    sleep(2000);",
+									"    count++;",
+									"    //  console.log(\"pdp请求：\"+ JSON.stringify(getpdpinfo));",
+									"pm.sendRequest(getpdpinfo, function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    result=res.json().result;",
+									"    console.log(\"result\"+JSON.stringify(res.json()));",
+									"   if(JSON.stringify(result)===\"[]\"||result.length<copynum){",
+									"       pdpinfo();",
+									"   }else if(count>20){",
+									"       return;",
+									"   }",
+									"   else{",
+									"   return;",
+									"   }});",
+									"}",
+									"",
+									"",
+									"postman.setNextRequest(\"downloadfile\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"getfilepdpinfolist\",\r\n    \"params\": [\"{{filehash}}\"],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "查询文件的pdp证明记录信息\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "cancelfilereadpledge",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "634599c0-3371-400c-b429-96101b2f6f50",
+								"exec": [
+									"//获取当前块高",
+									"var expireheight = pm.globals.get(\"expireheight\");",
+									"const getblockheight = {",
+									"    url: 'http://' + pm.globals.get(\"ontohost\"),",
+									"    method: 'POST',",
+									"    header: 'Content-Type: application/json', //注意要在Header中声明内容使用的类型",
+									"    body: {",
+									"        mode: 'raw', // 使用raw(原始)格式",
+									"        raw: JSON.stringify({",
+									"                jsonrpc: '2.0',",
+									"                method: 'getblockcount',",
+									"                params: [],",
+									"                id: 1",
+									"            }) //要将JSON对象转为文本发送",
+									"    }",
+									"};",
+									"",
+									"function sleep(numberMillis) {",
+									"var now = new Date();",
+									"var exitTime = now.getTime() + numberMillis;",
+									"while (true) {",
+									"now = new Date();",
+									"if (now.getTime() > exitTime)",
+									"return;",
+									"}",
+									"}",
+									"comparedBlock();",
+									"function comparedBlock() {",
+									"    sleep(20000);",
+									"    pm.sendRequest(getblockheight, function(err, res) {",
+									"        // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"        // console.log(\"当前块高 \" + res.json().result)",
+									"        if (res.json().result < expireheight) {",
+									"            comparedBlock();",
+									"        } else {",
+									"            console.log(\"当前块高 \" + res.json().result)",
+									"            return;",
+									"        }",
+									"    });",
+									"}",
+									"",
+									"",
+									"",
+									"//查询节点端口是否开启",
+									"",
+									"//发送请求",
+									"/*pm.sendRequest(\"http://\" + pm.globals.get(\"shost1\"), function(err, res) {",
+									"    // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    if (err) {",
+									"        console.log(pm.globals.get(\"shost1\") + \"节点访问出错\" + JSON.stringify(err))",
+									"    } else {",
+									"        console.log(pm.globals.get(\"shost1\") + \"节点访问成功\")",
+									"    }",
+									"});",
+									"",
+									"//发送请求",
+									"pm.sendRequest(\"http://\" + pm.globals.get(\"shost2\"), function(err, res) {",
+									"    // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    if (err) {",
+									"        console.log(pm.globals.get(\"shost2\") + \"节点访问出错\" + JSON.stringify(err))",
+									"    } else {",
+									"        console.log(pm.globals.get(\"shost2\") + \"节点访问成功\")",
+									"    }",
+									"});",
+									"//发送请求",
+									"pm.sendRequest(\"http://\" + pm.globals.get(\"shost3\"), function(err, res) {",
+									"    // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"    if (err) {",
+									"        console.log(pm.globals.get(\"shost3\") + \"节点访问出错\" + JSON.stringify(err))",
+									"    } else {",
+									"        console.log(pm.globals.get(\"shost3\") + \"节点访问成功\")",
+									"    }",
+									"});*/",
+									"",
+									"",
+									"",
+									"postman.setNextRequest(\"createspace\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e4f00927-d120-42d4-9734-b6ff1fd3be79",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"  console.log(\"运行时间 =\"+pm.response.responseTime);",
+									"    console.log(\"cancelfilereadpledge 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"cancelfilereadpledge\",\r\n    \"params\": [\"{{filehash}}\"],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "从下载文件合约质押中提款"
+					},
+					"response": []
+				},
+				{
+					"name": "retryUploadFile",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "47665113-fdde-4292-a4ad-e6d3ce87d37d",
+								"exec": [
+									"//查询节点端口是否开启",
+									"",
+									"//发送请求",
+									"/*pm.sendRequest(\"http://\"+pm.globals.get(\"shost1\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"   if(err){",
+									"       console.log(pm.globals.get(\"shost1\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost1\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost2\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"  if(err){",
+									"       console.log(pm.globals.get(\"shost2\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost2\")+\"节点访问成功\")",
+									"   }",
+									"});",
+									"//发送请求",
+									"pm.sendRequest(\"http://\"+pm.globals.get(\"shost3\"), function (err, res) {",
+									"   // 响应为JSON格式可以使用res.json()获取到JSON对象",
+									"     if(err){",
+									"       console.log(pm.globals.get(\"shost3\")+\"节点访问出错\"+JSON.stringify(err))",
+									"   }else{",
+									"        console.log(pm.globals.get(\"shost3\")+\"节点访问成功\")",
+									"   }",
+									"});*/",
+									"postman.setNextRequest(\"getfilelist\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "72394fc6-1a74-4a27-be4e-39a738c362c3",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\" retryUploadFile  返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"查询返回结果正确\", function () {",
+									"    ",
+									"    pm.expect(jsonData.desc).to.eql(\"SUCCESS\");",
+									"});",
+									"pm.test(\"查询返回的错误码是0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"",
+									"var host=pm.globals.get(\"host\");",
+									"",
+									"function sleep(numberMillis) {",
+									"var now = new Date();",
+									"var exitTime = now.getTime() + numberMillis;",
+									"while (true) {",
+									"now = new Date();",
+									"if (now.getTime() > exitTime)",
+									"return;",
+									"}",
+									"}",
+									"//发送查询进度请求",
+									" function uploadProcess(taskId){",
+									"     const gettaskinfo = {",
+									"      url: 'http://'+host,",
+									"     method: 'POST',",
+									"     header: 'Content-Type: application/json',  //注意要在Header中声明内容使用的类型",
+									"     body: {",
+									"    mode: 'raw',  // 使用raw(原始)格式",
+									"    raw: JSON.stringify({",
+									"    jsonrpc: '2.0',",
+									"    method: 'getuploadtaskinfobyid',",
+									"    params: [taskId],",
+									"    id: '1'",
+									"}) //要将JSON对象转为文本发送",
+									"}",
+									"};",
+									"     ",
+									"        sleep(3000);",
+									"        pm.sendRequest(gettaskinfo, function (err, res) {",
+									"            // console.log(\"返回上传任务详情：\"+JSON.stringify(res.json()))",
+									"           var  resJson=res.json().result.TaskBaseInfo;",
+									"           if(resJson.Status===2 && resJson.Progress===0){",
+									"           console.log(\"Status=\"+resJson.Status+\" Progress=\"+ resJson.Progress)",
+									"            pm.globals.set(\"filehash1\",resJson.FileHash );",
+									"           pm.test(\"上传成功\", function () {",
+									"    pm.expect( resJson.Progress).to.eql(0);",
+									"});",
+									"           }else if(resJson.Progress===1){",
+									"                console.log(\"上传过程报错：\"+JSON.stringify(res.json()));",
+									"                   pm.test(\"上传成功\", function () {",
+									"    pm.expect(resJson.Progress).to.eql(0);",
+									"});",
+									"           }else{",
+									"               uploadProcess(taskId);",
+									"           }",
+									"        });",
+									"    }",
+									" if(jsonData.error===0){",
+									"     uploadProcess(jsonData.result.TaskID);",
+									" }",
+									" ",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"uploadfile\",\r\n    \"params\": [{\r\n        \"FilePath\": \"{{filepath}}/test.log\",\r\n        \"FileDesc\": \"test.log\",\r\n        \"FileSize\": 1024,\r\n        \"TimeExpired\": {{expiredtime}},\r\n        \"CopyNum\": {{copynum}},\r\n        \"StorageType\": 1,\r\n        \"EncryptPassword\": \"{{pwd}}\"\r\n    }],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrydeletefile",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "44dfb0bb-6d6a-4b32-bd35-456e5c5aaf2a",
+								"exec": [
+									"postman.setNextRequest(\"deletespace\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "8bb88cff-fcb5-4038-9bc3-e0dfb28e00de",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\" retrydeletefile  返回结果：\"+JSON.stringify(pm.response.json()));",
+									"pm.test(\"验证error为0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									" pm.test(\"验证result 给出错误信息\", function () {",
+									" var result=JSON.stringify(jsonData.result);",
+									"",
+									" pm.expect(result).to.include(\"[APP SDK] FsDeleteFiles fileInfo is nil\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jsonrpc\": \"2.0\",\r\n    \"method\": \"deletefiles\",\r\n    \"params\": [\r\n       [\"{{filehash}}\",\"{{spaceFilehash}}\"]\r\n    ],\r\n    \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "364a48f0-0feb-42be-a5cc-3c61a3101690",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "5d6813a1-c202-496c-af13-b04b2e8ae411",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "server",
+			"item": [
+				{
+					"name": "querynode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6aa38826-193b-40ad-8c32-014407ac63c7",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\" querynode 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"var reqData=request.data//request表示请求对象，因为是josn的方式request.data是请求内容字符串",
+									"var reqJson=JSON.parse(reqData)//将字符串转换为json对象",
+									"console.log(\"请求参数：\"+JSON.stringify(reqJson));",
+									"",
+									"pm.test(\"查询返回结果正确\", function () {",
+									"    ",
+									"    pm.expect(jsonData.desc).to.eql(\"SUCCESS\");",
+									"});",
+									"pm.test(\"查询返回的错误码是0\", function () {",
+									"    ",
+									"    pm.expect(jsonData.error).to.eql(0);",
+									"});",
+									"pm.test(\"返回的节点地址是访问地址\", function () {",
+									"    ",
+									"    pm.expect(jsonData.result.NodeAddr).to.eql(pm.globals.get(\"saddr1\"));",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "435e132a-6633-45ed-ae23-687efef3e8e0",
+								"exec": [
+									" postman.setNextRequest(\"uploadfile\");",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n      \"jsonrpc\": \"2.0\",\r\n      \"method\": \"querynode\",\r\n      \"params\": [\"{{saddr1}}\"],\r\n      \"id\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{shost1}}",
+							"protocol": "http",
+							"host": [
+								"{{shost1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detailservice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c70a0383-6ae7-41ff-9ceb-24b77a166e7c",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\"detailservice  返回结果：\"+JSON.stringify(pm.response.json()));",
+									"tests[\"查询返回结果正确\"] = jsonData.desc === \"SUCCESS\"",
+									"tests[\"查询返回的错误码是0\"] = jsonData.error === 0",
+									"tests[\"返回的result不为空\"] = jsonData.result",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a430e8a7-6b48-4edb-ad1a-31c3d5d5840f",
+								"exec": [
+									"postman.setNextRequest(\"retryUploadFile\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n      \"jsonrpc\": \"2.0\",\r\n      \"method\": \"detailservice\",\r\n      \"params\": [],\r\n      \"id\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{shost1}}",
+							"protocol": "http",
+							"host": [
+								"{{shost1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "querynode_noexist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "610898ad-66c0-4dfc-b112-89b4c0ee43b8",
+								"exec": [
+									" var jsonData = pm.response.json();",
+									"console.log(\"querynode 返回结果：\"+JSON.stringify(pm.response.json()));",
+									"tests[\"查询返回结果正确\"] = jsonData.desc === \"[Node Govern] FsNodeQuery getNodeRawInfo error!\"",
+									"tests[\"查询返回的错误码是0\"] = jsonData.error === 44002",
+									"tests[\"返回的结果是null\"] = jsonData.result === null"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d49077ac-5e91-48ad-bdf2-1bb5fd36dd8f",
+								"exec": [
+									"",
+									"// postman.setNextRequest(\"uploadfile\");",
+									"postman.setNextRequest(\"querynode\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n      \"jsonrpc\": \"2.0\",\r\n      \"method\": \"querynode\",\r\n      \"params\": [\"{{caddr1}}\"],\r\n      \"id\": \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{shost1}}/",
+							"protocol": "http",
+							"host": [
+								"{{shost1}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "查询本身不存在的节点信息"
+					},
+					"response": []
+				}
+			],
+			"description": "server端测试",
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ce1d9d7f-2015-4714-8ab0-f0a88376bd05",
+				"type": "text/javascript",
+				"exec": [
+					"postman.setNextRequest(\"startsdk\");"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d8bd7a82-dc74-424a-95d9-fead8afcfe91",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

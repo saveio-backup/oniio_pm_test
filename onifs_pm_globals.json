@@ -1,0 +1,169 @@
+{
+	"id": "010b3509-a5b6-432b-8c6a-d2683ffa3542",
+	"values": [
+		{
+			"key": "filehash",
+			"value": "QmZad5PYKqfSnYWbQMEBMVeXnsKBbpBaQmg83VY81n1S9m",
+			"enabled": true
+		},
+		{
+			"key": "saddr1",
+			"value": "AZCccqYZLRCaPSS6dooFvTAnGiLNybcJ7x",
+			"enabled": true
+		},
+		{
+			"key": "caddr1",
+			"value": "AQjcrXSYVPAALRUDkhkapodrxaB5Asb2kV",
+			"enabled": true
+		},
+		{
+			"key": "saddr2",
+			"value": "AGcEHyHcDFZ99CJQqXVuB7yTP15kZ5JxXb",
+			"enabled": true
+		},
+		{
+			"key": "saddr3",
+			"value": "AXpi5Ca7KYLCvaMhCZReRZj8v6YT98DEKS",
+			"enabled": true
+		},
+		{
+			"key": "filepath",
+			"value": "/home/ont/ontfs/autotest",
+			"enabled": true
+		},
+		{
+			"key": "downloadpath",
+			"value": "/home/ont/onifs/onifs-test/client/Sdk/Download",
+			"enabled": true
+		},
+		{
+			"key": "outfilepath",
+			"value": "/home/ont/onifs/onifs-test/client/Sdk/decry",
+			"enabled": true
+		},
+		{
+			"key": "expiredtime",
+			"value": 1599113165,
+			"enabled": true
+		},
+		{
+			"key": "host",
+			"value": "10.0.1.105:21336",
+			"enabled": true
+		},
+		{
+			"key": "shost2",
+			"value": "106.75.48.16:6189",
+			"enabled": true
+		},
+		{
+			"key": "filehash1",
+			"value": "Qmb2a6dSfuJxAM8vcYKaS2hjgLqohxB6x63jcYxE9m85SU",
+			"enabled": true
+		},
+		{
+			"key": "pwd",
+			"value": "pwd",
+			"enabled": true
+		},
+		{
+			"key": "copynum",
+			"value": "3",
+			"enabled": true
+		},
+		{
+			"key": "pdpinterval",
+			"value": "14400",
+			"enabled": true
+		},
+		{
+			"key": "caddr2",
+			"value": "APVRQgVD4kaVYBuxUeWXwPU9Px7Uhq2qJ7",
+			"enabled": true
+		},
+		{
+			"key": "spacefilehash",
+			"value": "QmUPa9WsJHbXjCdbFp9U2oRTRpAX7uVjLpNYJsEa762hZH",
+			"enabled": true
+		},
+		{
+			"key": "ontohost",
+			"value": "139.219.136.38:20436",
+			"enabled": true
+		},
+		{
+			"key": "balance",
+			"value": 9999998.584613632,
+			"enabled": true
+		},
+		{
+			"key": "gasprice",
+			"value": "500",
+			"enabled": true
+		},
+		{
+			"key": "gaslimit",
+			"value": "61005",
+			"enabled": true
+		},
+		{
+			"key": "balance1",
+			"value": null,
+			"enabled": true
+		},
+		{
+			"key": "timestamp",
+			"value": 1577951937671,
+			"enabled": true
+		},
+		{
+			"key": "ontoaddr",
+			"value": "139.219.136.38:20436",
+			"enabled": true
+		},
+		{
+			"key": "saddr",
+			"value": "AZCccqYZLRCaPSS6dooFvTAnGiLNybcJ7x",
+			"enabled": true
+		},
+		{
+			"key": "shost3",
+			"value": "40.73.103.72:6189",
+			"enabled": true
+		},
+		{
+			"key": "shost1",
+			"value": "106.75.48.16:6189",
+			"enabled": true
+		},
+		{
+			"key": "maxPeerCnt",
+			"value": "3",
+			"enabled": true
+		},
+		{
+			"key": "firstPdp",
+			"value": true,
+			"enabled": true
+		},
+		{
+			"key": "spaceVolume",
+			"value": "10485760",
+			"enabled": true
+		},
+		{
+			"key": "downPledge",
+			"value": 3,
+			"enabled": true
+		},
+		{
+			"key": "expireheight",
+			"value": null,
+			"enabled": true
+		}
+	],
+	"name": "My Workspace Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2020-09-02T05:09:41.452Z",
+	"_postman_exported_using": "Postman/7.31.1"
+}
